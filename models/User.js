@@ -26,7 +26,7 @@ const UserSchema = new Schema(
         ref: "Thoughts",
       },
     ],
-    freinds: [
+    friends: [
       {
         type: Schema.Types.ObjectId,
         ref: "Users",
@@ -48,5 +48,5 @@ UserSchema.virtual("friendsCount").get(function () {
 
 //Creating the User model using the User Schema
 const User = model("User", UserSchema);
-//Exporting the pizza model to be imported to the ./model/index.js
+//Exporting the user model to be imported to the ./model/index.js
 module.exports = User;
