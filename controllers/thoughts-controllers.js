@@ -16,12 +16,8 @@ const thoughtController = {
       });
   },
   //Get user by id using findOne()
-  getThoughtById({ params }, res) {
-    Thoughts.findOne({ _id: params.id })
-      .populate({
-        path: "thoughts",
-        select: "-__v",
-      })
+  getThoughtById(req, res) {
+    Thoughts.findOne({ _id: req.params.id })
       .select("-__v")
       .then((dbUserData) => {
         if (!dbUserData) {
@@ -40,8 +36,9 @@ const thoughtController = {
     console.log(body);
     Thoughts.create(body)
       .then(({ _id }) => {
+        console.log(_id);
         return User.findOneAndUpdate(
-          { _id: params.userId },
+          { _id: body.userId },
           //Note here that we're using the $push method to add the comment's _id to the specific user we want to update. The $push method works just the same way that it works in JavaScript it adds data to an array. All of the MongoDB-based functions like $push start with a dollar sign ($), making it easier to look at functionality and know what is built-in to MongoDB and what is a custom noun the developer is using.
           { $push: { thoughts: _id } },
           { new: true }
@@ -60,7 +57,7 @@ const thoughtController = {
   /*add a reaction to thought. reactions, do not create a reaction document; it just updates an existing Thought by pushing the new data into its respective thought.*/
   addReaction({ params, body }, res) {
     Thoughts.findOneAndUpdate(
-      { _id: params.thoughtId },
+      { _id: body.thoughtId },
       //mongoDB operator $push to push the reaction to the comment
       { $push: { reactions: body } },
       //the new: true returns the change
@@ -76,9 +73,9 @@ const thoughtController = {
       .catch((err) => res.json(err));
   },
   //delete a Thought
-  removeThought({ params }, res) {
+  removeThought(req, res) {
     /*The first method used here, .findOneAndDelete(), works a lot like .findOneAndUpdate(), as it deletes the document while also returning its data. We then take that data and use it to identify and remove it from the associated user using the Mongo $pull operation. Lastly, we return the updated user data, now without the _id of the thought in the thoughts array, and return it to the user. */
-    Thoughts.findOneAndDelete({ _id: params.thoughtId })
+    Thoughts.findOneAndDelete({ _id: req.params.id })
       .then((deletedThought) => {
         if (!deletedThought) {
           return res.status(404).json({ message: "No thought with this id!" });
@@ -86,13 +83,13 @@ const thoughtController = {
         return User.findOneAndUpdate(
           { _id: params.userId },
           //mongoDB operator $pull to delete the reaction to the thought
-          { $pull: { thoughts: params.thoughttId } },
+          { $pull: { thoughts: params.thoughtId } },
           { new: true }
         );
       })
       .then((dbUserData) => {
         if (!dbUserData) {
-          res.status(404).json({ message: "No pizza found with this id!" });
+          res.status(404).json({ message: "No thought found with this id!" });
           return;
         }
         res.json(dbUserData);

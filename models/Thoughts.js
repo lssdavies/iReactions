@@ -54,12 +54,7 @@ const ThoughtsSchema = new Schema(
       type: String,
       require: "Please include your username",
     },
-    reactions: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Reactions",
-      },
-    ],
+    reactions: [Reactions],
   },
   {
     toJSON: {
