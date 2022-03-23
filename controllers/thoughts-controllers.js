@@ -70,7 +70,7 @@ const thoughtController = {
   /*add a reaction to thought. reactions, do not create a reaction document; it just updates an existing Thought by pushing the new data into its respective thought.*/
   addReaction({ params, body }, res) {
     Thoughts.findOneAndUpdate(
-      { _id: body.thoughtId },
+      { _id: params.thoughtId },
       //mongoDB operator $push to push the reaction to the comment
       { $push: { reactions: body } },
       //the new: true returns the change
@@ -114,7 +114,7 @@ const thoughtController = {
     Thoughts.findOneAndUpdate(
       { _id: params.thoughtId },
       /*MongoDB $pull operator to remove the specific reaction from the reaction array where the reactionId matches the value of params.reactionId passed in from the route. */
-      { $pull: { reactions: { reactionsId: params.reactionsId } } },
+      { $pull: { reactions: { reactionId: params.reactionId } } },
       //the new: true returns the change
       { new: true }
     )

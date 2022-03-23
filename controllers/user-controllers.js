@@ -9,6 +9,14 @@ const userController = {
     console.log("get all users route");
     /*chaining .select() method onto query to remove the __v field and .sort() to sort users from newest to oldest*/
     User.find({})
+      .populate({
+        path: "thoughts",
+        select: "-__v",
+      })
+      .populate({
+        path: "friends",
+        select: "-__v",
+      })
       .select("-__v")
       .sort({ _id: -1 })
       .then((dbUserData) => res.json(dbUserData))
@@ -22,6 +30,10 @@ const userController = {
     User.findOne({ _id: params.id })
       .populate({
         path: "thoughts",
+        select: "-__v",
+      })
+      .populate({
+        path: "friends",
         select: "-__v",
       })
       .select("-__v")

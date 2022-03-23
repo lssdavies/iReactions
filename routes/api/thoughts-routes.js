@@ -17,10 +17,10 @@ router.route("/").get(getAllThoughts).post(addThought);
 router.route("/:id").get(getThoughtById).put(updateThought).delete(removeThought);
 
 // This updates a Thought with a reaction so using put opposed to post
-router.route("/:thoughtId/reaction").put(addReaction);
+router.route("/:userId/:thoughtId").post(addReaction);
 
-//this removes a reaction from a specific Thought
-router.route("/:thoughtId/:reactionId").delete(removeReaction);
+//This route deletes a reaction and in addition to the above route it needs the reactionId
+router.route("/:userId/:thoughtId/reactionId").delete(removeReaction);
 
 module.exports = router;
 //routes are exported to the ./api/index.js

@@ -5,7 +5,7 @@ const dateFormat = require("../utils/dateFormat");
 /*reactions schema will be used as a subdocument array to Thoughts since the data will never be queried on its own*/
 const Reactions = new Schema(
   {
-    // set custom id to avoid confusion with parent comment _id
+    // set custom id to avoid confusion with parent Thought _id
     reactionId: {
       type: Schema.Types.ObjectId,
       //generating the same type of ObjectId() value that the _id field typically does.
@@ -61,6 +61,7 @@ const ThoughtsSchema = new Schema(
       virtuals: true,
       getters: true,
     },
+    id: false,
   }
 );
 /* creating a virtual to get the total count of reactions*/
