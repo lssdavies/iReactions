@@ -1,4 +1,4 @@
-//importing dependencies and api routes from pizza-routes and comment routes
+//importing dependencies and api routes from user and Thoughts routes
 const router = require("express").Router();
 const userRoutes = require("./user-routes");
 const thoughtRoutes = require("./thoughts-routes");

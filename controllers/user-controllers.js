@@ -1,5 +1,5 @@
 //importing dependenices from models directory. These controllers are the main CRUD Methods for the /api/user endpoints. They will hooked up to the routes in the routes folder.
-const { User } = require("../models");
+const { User, Thoughts } = require("../models");
 
 /*Creating functions as methods to be used with the User object as call back functions for the express.js routes*/
 
@@ -37,7 +37,7 @@ const userController = {
         res.status(400).json(err);
       });
   },
-  //Create user route
+  //Create user 
   createUser({ body }, res) {
     User.create(body)
       .then((dbUserData) => res.json(dbUserData))
@@ -58,9 +58,10 @@ const userController = {
       })
       .catch((err) => res.status(400).json(err));
   },
-  //delete user  With the .findOneAndDelete()
-  deleteUser({ params }, res) {
-    User.findOneAndDelete({ _id: params.id })
+  /*delete user with .findOneAndDelete(), this controller has been updated to delete all the specified user thoughts as well. From we Thoughts into body and using deleteMany() to delete thoughts linked to the username*/
+  deleteUser({ params, body }, res) {
+    Thoughts.deleteMany({username: body.username})
+    .then( () => {User.findOneAndDelete({ _id: params.id })
       .then((dbUserData) => {
         if (!dbUserData) {
           res.status(404).json({ message: "No User found with this id!" });
@@ -68,8 +69,37 @@ const userController = {
         }
         res.json(dbUserData);
       })
+    })
       .catch((err) => res.status(400).json(err));
   },
+  //Add a friend to a user using findOneAndupdate() but not passing any body will just $push an user id into the freinds fields
+  addFriend({ params}, res) {
+    User.findOneAndUpdate({ _id: params.id },
+       {$push: {friends: params.friendId}},
+       {new: true}
+       ).then((dbUserData) => {
+        if (!dbUserData) {
+          res.status(404).json({ message: "No User found with this id! Cannot add friend" });
+          return;
+        }
+        res.json(dbUserData);
+      })
+      .catch((err) => res.status(400).json(err));
+  },
+  //delete friend using findOneAndUpdate we will have to use $pull since only deleting one friend and leaving the rest
+  deleteFriend({ params }, res) {
+    User.findOneAndUpdate({ _id: params.id },
+    {$pull: {friend: friendId}},
+    {new: true}
+    ).then((dbUserData) => {
+        if (!dbUserData) {
+          res.status(404).json({ message: "No User found with this id! Cannot delete friend" });
+          return;
+        }
+        res.json(dbUserData);
+      })
+      .catch((err) => res.status(400).json(err));
+    }
 };
 
 module.exports = userController;

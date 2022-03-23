@@ -9,7 +9,7 @@ const thoughtController = {
     Thoughts.find({})
       .select("-__v")
       .sort({ _id: -1 })
-      .then((dbUserData) => res.json(dbUserData))
+      .then((dbThoughtsData) => res.json(dbThoughtsData))
       .catch((err) => {
         console.log(err);
         res.status(400).json(err);
@@ -19,12 +19,12 @@ const thoughtController = {
   getThoughtById(req, res) {
     Thoughts.findOne({ _id: req.params.id })
       .select("-__v")
-      .then((dbUserData) => {
-        if (!dbUserData) {
-          res.status(404).json({ message: "No Thought found with this id!" });
+      .then((dbThoughtsData) => {
+        if (!dbThoughtsData) {
+          res.status(404).json({ message: "No thought found with this id!" });
           return;
         }
-        res.json(dbUserData);
+        res.json(dbThoughtsData);
       })
       .catch((err) => {
         console.log(err);
@@ -44,15 +44,14 @@ const thoughtController = {
           { new: true }
         );
       })
-      .then((dbUserData) => {
-        if (!dbUserData) {
-          res.status(404).json({ message: "No user found with this id!" });
+      .then((dbThoughtsData) => {
+        if (!dbThoughtsData) {
+          res.status(404).json({ message: "No thought found with this id!" });
           return;
         }
-        res.json(dbUserData);
+        res.json(dbThoughtsData);
       })
       .catch((err) => res.json(err));
-    /*We're also returning the user Promise here so that we can do something with the results of the Mongoose operation. Again, because we passed the option of new: true, we're receiving back the updated user (the user with the new thought included)*/
   },
   /*add a reaction to thought. reactions, do not create a reaction document; it just updates an existing Thought by pushing the new data into its respective thought.*/
   addReaction({ params, body }, res) {
@@ -61,14 +60,14 @@ const thoughtController = {
       //mongoDB operator $push to push the reaction to the comment
       { $push: { reactions: body } },
       //the new: true returns the change
-      { new: true, runValidators: true }
+      { new: true }
     )
-      .then((dbUserData) => {
-        if (!dbUserData) {
-          res.status(404).json({ message: "No user found with this id!" });
+      .then((dbThoughtsData) => {
+        if (!dbThoughtsData) {
+          res.status(404).json({ message: "No thought found with this id!" });
           return;
         }
-        res.json(dbUserData);
+        res.json(dbThoughtsData);
       })
       .catch((err) => res.json(err));
   },
@@ -87,12 +86,12 @@ const thoughtController = {
           { new: true }
         );
       })
-      .then((dbUserData) => {
-        if (!dbUserData) {
+      .then((dbThoughtsData) => {
+        if (!dbThoughtsData) {
           res.status(404).json({ message: "No thought found with this id!" });
           return;
         }
-        res.json(dbUserData);
+        res.json(dbThoughtsData);
       })
       .catch((err) => res.json(err));
   },
@@ -105,7 +104,7 @@ const thoughtController = {
       //the new: true returns the change
       { new: true }
     )
-      .then((dbUserData) => res.json(dbUserData))
+      .then((dbThoughtsData) => res.json(dbThoughtsData))
       .catch((err) => res.json(err));
   },
 };
