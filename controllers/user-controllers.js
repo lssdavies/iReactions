@@ -37,7 +37,7 @@ const userController = {
         res.status(400).json(err);
       });
   },
-  //Create user 
+  //Create user
   createUser({ body }, res) {
     User.create(body)
       .then((dbUserData) => res.json(dbUserData))
@@ -60,26 +60,30 @@ const userController = {
   },
   /*delete user with .findOneAndDelete(), this controller has been updated to delete all the specified user thoughts as well. From we Thoughts into body and using deleteMany() to delete thoughts linked to the username*/
   deleteUser({ params, body }, res) {
-    Thoughts.deleteMany({username: body.username})
-    .then( () => {User.findOneAndDelete({ _id: params.id })
-      .then((dbUserData) => {
-        if (!dbUserData) {
-          res.status(404).json({ message: "No User found with this id!" });
-          return;
-        }
-        res.json(dbUserData);
+    Thoughts.deleteMany({ username: body.username })
+      .then(() => {
+        User.findOneAndDelete({ _id: params.id }).then((dbUserData) => {
+          if (!dbUserData) {
+            res.status(404).json({ message: "No User found with this id!" });
+            return;
+          }
+          res.json(dbUserData);
+        });
       })
-    })
       .catch((err) => res.status(400).json(err));
   },
   //Add a friend to a user using findOneAndupdate() but not passing any body will just $push an user id into the freinds fields
-  addFriend({ params}, res) {
-    User.findOneAndUpdate({ _id: params.id },
-       {$push: {friends: params.friendId}},
-       {new: true}
-       ).then((dbUserData) => {
+  addFriend({ params }, res) {
+    User.findOneAndUpdate(
+      { _id: params.id },
+      { $push: { friends: params.friendId } },
+      { new: true }
+    )
+      .then((dbUserData) => {
         if (!dbUserData) {
-          res.status(404).json({ message: "No User found with this id! Cannot add friend" });
+          res
+            .status(404)
+            .json({ message: "No User found with this id! Cannot add friend" });
           return;
         }
         res.json(dbUserData);
@@ -88,18 +92,24 @@ const userController = {
   },
   //delete friend using findOneAndUpdate we will have to use $pull since only deleting one friend and leaving the rest
   deleteFriend({ params }, res) {
-    User.findOneAndUpdate({ _id: params.id },
-    {$pull: {friend: friendId}},
-    {new: true}
-    ).then((dbUserData) => {
+    User.findOneAndUpdate(
+      { _id: params.id },
+      { $pull: { friend: friendId } },
+      { new: true }
+    )
+      .then((dbUserData) => {
         if (!dbUserData) {
-          res.status(404).json({ message: "No User found with this id! Cannot delete friend" });
+          res
+            .status(404)
+            .json({
+              message: "No User found with this id! Cannot delete friend",
+            });
           return;
         }
         res.json(dbUserData);
       })
       .catch((err) => res.status(400).json(err));
-    }
+  },
 };
 
 module.exports = userController;
