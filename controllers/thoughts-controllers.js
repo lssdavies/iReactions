@@ -53,6 +53,20 @@ const thoughtController = {
       })
       .catch((err) => res.json(err));
   },
+  //Update Thought using FindOneAndUpdate. forgot to add initially
+  updateThought({ params, body }, res) {
+    Thoughts.findOneAndUpdate({ _id: params.id }, body, {
+      new: true,
+    })
+      .then((dbThoughtsData) => {
+        if (!dbThoughtsData) {
+          res.status(404).json({ message: "No User found with this id!" });
+          return;
+        }
+        res.json(dbThoughtsData);
+      })
+      .catch((err) => res.status(400).json(err));
+  },
   /*add a reaction to thought. reactions, do not create a reaction document; it just updates an existing Thought by pushing the new data into its respective thought.*/
   addReaction({ params, body }, res) {
     Thoughts.findOneAndUpdate(

@@ -4,6 +4,7 @@ const {
   getAllThoughts,
   getThoughtById,
   addThought,
+  updateThought,
   removeThought,
   addReaction,
   removeReaction,
@@ -13,7 +14,7 @@ const {
 router.route("/").get(getAllThoughts).post(addThought);
 
 // /api/thoughts/:thoughtId
-router.route("/:id").get(getThoughtById).delete(removeThought);
+router.route("/:id").get(getThoughtById).put(updateThought).delete(removeThought);
 
 // This updates a Thought with a reaction so using put opposed to post
 router.route("/:thoughtId/reaction").put(addReaction);
